@@ -5,11 +5,19 @@ const path = require('node:path');
 
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 
-global.client = new Client({ intents: [GatewayIntentBits.Guilds] });
+global.client = new Client({ 
+	intents: [
+		GatewayIntentBits.Guilds, 
+		GatewayIntentBits.GuildVoiceStates
+	] 
+});
 global.basename = (fileName) => {
     let { basename } = require("path");
     return basename(fileName.split(".")[0]);
 }
+
+client.Database = require("../Database/Mongoose.js");
+global.memberData = async (id, guild) => await client.Database.fetchMember(id, guild);
 
 client.login(process.env.TOKEN)
 

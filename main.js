@@ -11,5 +11,6 @@ global.logs = {
 module.exports = {
 	Client: require("./src/config/client.js"),
     Events: require("./src/events/interactionCreate.js"),
-    ErrorsCatch: require("./src/config/error.js")
+    ErrorsCatch: require("./src/config/error.js"),
+    Database: require("./src/Database/Mongoose.js")
 };
