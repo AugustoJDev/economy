@@ -4,17 +4,17 @@ module.exports = {
 
 		const memberInfo = await memberData(newMember.id, newMember.guild.id);
 
-		/*
-		memberInfo.antiraid.bot = "Ativado"
-        memberInfo.markModified('antiraid.bot');
-        await memberInfo.save();
-		*/
-
         countMoney(oldMember, newMember, memberInfo);
     }
 };
 
 async function countMoney(oldMember, newMember, memberInfo) {
+
+	if(newMember.selfMute == true) {
+		points = 1
+	} else {
+		points = 4
+	}
 
 	if(newMember.channelId !== null) {
 		memberInfo.voice.join = Date.now();
@@ -23,19 +23,43 @@ async function countMoney(oldMember, newMember, memberInfo) {
 	};
 
 	if(!newMember.channelId) {
-		let timeInMS = memberInfo.voice.join - Date.now();
+
+		let timeInMS = Date.now() - memberInfo.voice.join;
 		let timeConverted = msToTime(timeInMS);
 
-		memberInfo.voice.hours = timeConverted;
+		let totalTimeInMS = memberInfo.voice.hours + timeInMS;
+			
+		let totalTime = msToTime(totalTimeInMS)
+			totalTime = totalTime.toString().replace("-", "").split(":")[0]
+			totalTime = Number(totalTime)
+
+		memberInfo.voice.hours = totalTimeInMS;
 		memberInfo.markModified("voice.hours");
 		await memberInfo.save();
 
 		let hours = Number(timeConverted.split(":")[0]);
-		let moneyPerHour = hours * 100;
 
 		if(hours > 4) hours = 4;
 
-		
+		let ableToGain = (20 - totalTime)
+		let inVoice = ableToGain - hours
+		let removeForLimit = remNeg(inVoice) * points
+
+		let moneyPerHour = (hours * points) - removeForLimit;
+			moneyPerHour = Number(moneyPerHour.toString().replace("-", ""))
+
+		if(memberInfo.voice.limit == true) return;
+
+		if(totalTime >= 20) {
+			memberInfo.voice.limite = true
+			memberInfo.markModified("voice.limit");
+			await memberInfo.save();
+			return;
+		};
+
+		memberInfo.voice.money = memberInfo.voice.money + moneyPerHour
+		memberInfo.markModified("voice.money");
+		await memberInfo.save();
 	};
 };
 
@@ -55,3 +79,9 @@ function msToTime(s) {
   
 	return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
   };
+
+function remNeg(value) {
+	let val = Number(value.toString().replace("-", ""))
+
+	return val;
+}
