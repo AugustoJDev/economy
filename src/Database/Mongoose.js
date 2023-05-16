@@ -24,7 +24,8 @@ module.exports.fetchMember = async function(userID, guildID){
                 join: 0,
                 money: 0,
                 hours: "0",
-                limit: false
+                limit: false,
+                count: 0
             }
         })
         await memberDB.save().catch(err => console.log(err));

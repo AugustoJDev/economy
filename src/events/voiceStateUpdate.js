@@ -1,3 +1,5 @@
+const ms = require("ms");
+
 module.exports = {
 	name: basename(__filename),
 	async execute(oldMember, newMember) {
@@ -5,8 +7,20 @@ module.exports = {
 		const memberInfo = await memberData(newMember.id, newMember.guild.id);
 
         countMoney(oldMember, newMember, memberInfo);
+		resetTime(memberInfo);
     }
 };
+
+async function resetTime(memberInfo) {
+
+	if((memberInfo.voice.count + ms("24h")) < Date.now()) {
+		memberInfo.voice.limit = false;
+		memberInfo.voice.hours = 0;
+		memberInfo.voice.count = 0;
+		memberInfo.markModified("voice");
+		memberInfo.save();
+	}
+}
 
 async function countMoney(oldMember, newMember, memberInfo) {
 
@@ -51,14 +65,15 @@ async function countMoney(oldMember, newMember, memberInfo) {
 		if(memberInfo.voice.limit == true) return;
 
 		if(totalTime >= 20) {
-			memberInfo.voice.limite = true
-			memberInfo.markModified("voice.limit");
+			memberInfo.voice.limite = true;
+			memberInfo.voice.count = Date.now();
+			memberInfo.markModified("voice");
 			await memberInfo.save();
 			return;
 		};
 
 		memberInfo.voice.money = memberInfo.voice.money + moneyPerHour
-		memberInfo.markModified("voice.money");
+		memberInfo.markModified("voice");
 		await memberInfo.save();
 	};
 };

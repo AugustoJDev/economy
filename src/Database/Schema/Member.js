@@ -8,7 +8,8 @@ module.exports = mongoose.model("Member", new mongoose.Schema({
         join: { type: Number, default: 0 },
         money: { type: Number, default: 0 },
         hours: { type: Number, default: "0" },
-        limit: { type: Boolean, default: false }
+        limit: { type: Boolean, default: false },
+        count: { type: Number, default: 0 }
       }
     }
 }));
