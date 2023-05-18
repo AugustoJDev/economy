@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "nodemon .",
+    "push": "git push origin development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

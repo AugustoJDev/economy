@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const ms = require("ms");
 
-// Commands don't need to have their names written here, just set the filename
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName(basename(__filename))
